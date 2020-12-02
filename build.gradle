@@ -1,0 +1,46 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    // android sdk variables
+    ext.android_compile_sdk_version = 29
+    ext.android_target_sdk_version = 29
+
+    // kotlin version
+    ext.kotlin_version = "1.4.10"
+
+    // dagger
+    ext.dagger_version = '2.29.1'
+
+    // javax annotation version
+    ext.javax_annotation_version = '1.0'
+
+    // jUnit
+    ext.junit_version = '4.13'
+
+    // mockito
+    ext.mockito_version = '3.5.11'
+    ext.mockito_kotlin_version = '1.6.0'
+
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.0.1"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
