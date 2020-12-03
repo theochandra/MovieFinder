@@ -17,7 +17,7 @@ class MovieMapper @Inject constructor() {
         )
     }
 
-    fun map(movie: MovieResponse): Movie {
+    private fun map(movie: MovieResponse): Movie {
         return Movie(
                 id = movie.id,
                 overview = movie.overview,

@@ -1,7 +1,11 @@
 package com.android.data.repository
 
+import com.android.data.datasource.MovieRemoteDataSource
 import com.android.data.mapper.MovieMapper
+import com.android.data.safeApiCall
+import com.android.domain.Result
 import com.android.domain.model.Movie
+import com.android.domain.model.MovieList
 import com.android.domain.repository.MovieRepository
 
 class MovieRepositoryImpl (
@@ -9,24 +13,29 @@ class MovieRepositoryImpl (
         private val movieMapper: MovieMapper
 ) : MovieRepository {
 
-    override suspend fun getMovieListByQuery(searchKeywords: String, page: Int): List<Movie> {
-        return getMoviesFromApi(searchKeywords, page)
+    override suspend fun getMovieListByQuery(
+            searchKeywords: String, page: Int
+    ): Result<MovieList> {
+        return safeApiCall(
+                call = { getMoviesFromApi(searchKeywords, page) },
+                errorMessage = "Exception occurred!"
+        )
     }
 
-    private suspend fun getMoviesFromApi(searchKeywords: String, page: Int):List<Movie> {
-        lateinit var movieList: List<Movie>
-
-        try {
-            val response = movieRemoteDataSource.getMovieListByQuery(searchKeywords, page)
-            val body = response.body()
+    private suspend fun getMoviesFromApi(
+            searchKeywords: String, page: Int
+    ): Result<MovieList> {
+        lateinit var movieList: MovieList
+        val result = movieRemoteDataSource.getMovieListByQuery(searchKeywords, page)
+        if (result.isSuccessful) {
+            val body = result.body()
             body?.let {
-                movieList = it.results.map { movieMapper.map(it) }
+                movieList = movieMapper.map(it)
             }
-        } catch (exception: Exception) {
-
+            return Result.Success(movieList)
         }
 
-        return movieList
+        return Result.Error(result.code(), result.message())
     }
 
 }

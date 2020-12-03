@@ -1,4 +1,4 @@
-package com.android.data.repository
+package com.android.data.datasource
 
 import com.android.data.api.TMDBApi
 import com.android.data.response.MovieListResponse
