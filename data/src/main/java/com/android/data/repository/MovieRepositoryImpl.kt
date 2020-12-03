@@ -1,15 +1,15 @@
 package com.android.data.repository
 
-import com.android.data.datasource.MovieRemoteDataSource
+import com.android.data.api.TMDBApi
 import com.android.data.mapper.MovieMapper
 import com.android.data.safeApiCall
 import com.android.domain.Result
-import com.android.domain.model.Movie
 import com.android.domain.model.MovieList
 import com.android.domain.repository.MovieRepository
+import javax.inject.Inject
 
-class MovieRepositoryImpl (
-        private val movieRemoteDataSource: MovieRemoteDataSource,
+class MovieRepositoryImpl @Inject constructor (
+        private val tmdbApi: TMDBApi,
         private val movieMapper: MovieMapper
 ) : MovieRepository {
 
@@ -25,16 +25,16 @@ class MovieRepositoryImpl (
     private suspend fun getMoviesFromApi(
             searchKeywords: String, page: Int
     ): Result<MovieList> {
-        lateinit var movieList: MovieList
-        val result = movieRemoteDataSource.getMovieListByQuery(searchKeywords, page)
+        val result = tmdbApi.getMovieListByQuery(searchKeywords, page).await()
         if (result.isSuccessful) {
             val body = result.body()
-            body?.let {
-                movieList = movieMapper.map(it)
+            if (body != null) {
+                val movieList = movieMapper.map(
+                    body
+                )
+                return Result.Success(movieList)
             }
-            return Result.Success(movieList)
         }
-
         return Result.Error(result.code(), result.message())
     }
 

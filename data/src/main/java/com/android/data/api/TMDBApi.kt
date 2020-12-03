@@ -1,16 +1,17 @@
 package com.android.data.api
 
 import com.android.data.response.MovieListResponse
+import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import javax.inject.Inject
+import retrofit2.http.GET
+import retrofit2.http.Query
 
-class TMDBApi @Inject constructor(private val tmdbEndPoint: TMDBEndPoint) {
+interface TMDBApi {
 
-    suspend fun getMovieListByQuery(
-            searchKeywords: String,
-            page: Int
-    ): Response<MovieListResponse> {
-        return tmdbEndPoint.getMovieListByQuery(searchKeywords, page)
-    }
+    @GET("movies/popular")
+    fun getMovieListByQuery(
+        @Query("keywords") searchKeywords: String,
+        @Query("page") page:Int
+    ): Deferred<Response<MovieListResponse>>
 
 }

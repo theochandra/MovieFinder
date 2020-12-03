@@ -24,7 +24,7 @@ buildscript {
 
     // mockito
     ext.mockito_version = '3.5.11'
-    ext.mockito_kotlin_version = '1.6.0'
+    ext.mockito_kotlin_version = '1.6.0' // delete if not used anywhere
 
     repositories {
         google()
