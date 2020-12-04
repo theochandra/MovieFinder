@@ -6,7 +6,7 @@ import com.android.domain.model.Movie
 import com.android.domain.model.MovieList
 import javax.inject.Inject
 
-class MovieMapper {
+class MovieMapper @Inject constructor() {
 
     fun map(response: MovieListResponse): MovieList {
         return MovieList(

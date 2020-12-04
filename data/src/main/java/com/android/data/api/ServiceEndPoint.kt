@@ -6,12 +6,12 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface TMDBApi {
+interface ServiceEndPoint {
 
     @GET("movies/popular")
-    fun getMovieListByQuery(
+    suspend fun getMovieListByQuery(
         @Query("keywords") searchKeywords: String,
         @Query("page") page:Int
-    ): Deferred<Response<MovieListResponse>>
+    ): Response<MovieListResponse>
 
 }

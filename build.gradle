@@ -13,11 +13,20 @@ buildscript {
     // javax annotation version
     ext.javax_annotation_version = '1.0'
 
+    // coroutines
+    ext.coroutines_version = '1.4.2'
+
     // retrofit
     ext.retrofit_version = '2.9.0'
 
+    // logging interceptor
+    ext.logging_interceptor_version = "4.9.0"
+
     // gson
     ext.gson_version = '2.8.6'
+
+    // picasso
+    ext.picasso_version = '2.71828'
 
     // jUnit
     ext.junit_version = '4.13'
