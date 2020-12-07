@@ -17,6 +17,7 @@ class MovieMapper @Inject constructor() {
         )
     }
 
+    // todo -> need to fix if poster path is null
     private fun map(movie: MovieResponse): Movie {
         return Movie(
                 id = movie.id,

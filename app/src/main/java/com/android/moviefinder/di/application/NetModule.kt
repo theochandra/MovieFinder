@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
-class NetworkModule {
+class NetModule {
 
     companion object {
         const val CONNECT_TIMEOUT_IN_SECONDS = 10

@@ -36,12 +36,12 @@ class GetMovieListByQueryUseCaseTest {
     @Test
     fun `shows loading when start`() {
         runBlocking {
-            `when`(movieRepository.getMovieListByQuery("test", 1))
+            `when`(movieRepository.getMovieListByQuery("", "test", 1))
                     .thenReturn(Result.Loading)
 
-            val result = sut.execute("test", 1)
+            val result = sut.execute("", "test", 1)
 
-            verify(movieRepository).getMovieListByQuery("test", 1)
+            verify(movieRepository).getMovieListByQuery("", "test", 1)
             Assert.assertEquals(result, Result.Loading)
         }
     }
@@ -56,12 +56,12 @@ class GetMovieListByQueryUseCaseTest {
                     totalResults = 20
             )
 
-            `when`(movieRepository.getMovieListByQuery("test", 1))
+            `when`(movieRepository.getMovieListByQuery("", "test", 1))
                     .thenReturn(Result.Success(movieList))
 
-            val result = sut.execute("test", 1)
+            val result = sut.execute("", "test", 1)
 
-            verify(movieRepository).getMovieListByQuery("test", 1)
+            verify(movieRepository).getMovieListByQuery("","test", 1)
             Assert.assertEquals(result, Result.Success(movieList))
         }
     }
@@ -71,12 +71,12 @@ class GetMovieListByQueryUseCaseTest {
         runBlocking {
             val throwable = Throwable()
 
-            `when`(movieRepository.getMovieListByQuery("test", 1))
+            `when`(movieRepository.getMovieListByQuery("", "test", 1))
                     .thenReturn(Result.Error(404, "error occurred"))
 
-            val result = sut.execute("test", 1)
+            val result = sut.execute("", "test", 1)
 
-            verify(movieRepository).getMovieListByQuery("test", 1)
+            verify(movieRepository).getMovieListByQuery("", "test", 1)
             Assert.assertEquals(result, Result.Error(404, "error occurred"))
         }
     }

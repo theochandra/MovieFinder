@@ -1,17 +1,18 @@
 package com.android.moviefinder.di.application
 
+import android.content.Context
 import com.android.moviefinder.base.BaseApplication
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class ApplicationModule(private val application: BaseApplication) {
+class AppModule(private val context: Context) {
 
     @Provides
     @Singleton
-    fun provideApplication(): BaseApplication {
-        return application
+    fun provideApplicationContext(): Context {
+        return context.applicationContext
     }
 
 }

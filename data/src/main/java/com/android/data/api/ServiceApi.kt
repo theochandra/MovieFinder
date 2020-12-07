@@ -9,10 +9,11 @@ class ServiceApi @Inject constructor(
 ) {
 
     suspend fun getMovieListByQuery(
-            searchKeywords: String,
-            page:Int
+        apiKey: String,
+        searchKeywords: String,
+        page:Int
     ): Response<MovieListResponse> {
-        return serviceEndPoint.getMovieListByQuery(searchKeywords, page)
+        return serviceEndPoint.getMovieListByQuery(apiKey, searchKeywords, page)
     }
 
 }

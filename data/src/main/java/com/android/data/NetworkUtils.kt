@@ -10,6 +10,6 @@ suspend fun <T: Any> safeApiCall(
     return try {
         call()
     } catch (e: Exception) {
-        Result.Exception(IOException(errorMessage, e))
+        Result.Exception(Exception(errorMessage, e))
     }
 }

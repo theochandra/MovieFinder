@@ -13,18 +13,19 @@ class MovieRepositoryImpl (
 ) : MovieRepository {
 
     override suspend fun getMovieListByQuery(
-            searchKeywords: String, page: Int
+        apiKey: String, searchKeywords: String, page: Int
     ): Result<MovieList> {
         return safeApiCall(
-                call = { getMoviesFromApi(searchKeywords, page) },
+                call = { getMoviesFromApi(apiKey, searchKeywords, page) },
                 errorMessage = "Exception occurred!"
         )
     }
 
     private suspend fun getMoviesFromApi(
-            searchKeywords: String, page: Int
+        apiKey: String, searchKeywords: String, page: Int
     ): Result<MovieList> {
-        val result = serviceApi.getMovieListByQuery(searchKeywords, page)
+        val result = serviceApi.getMovieListByQuery(apiKey, searchKeywords, page)
+
         if (result.isSuccessful) {
             val body = result.body()
             if (body != null) {
@@ -33,7 +34,10 @@ class MovieRepositoryImpl (
                 )
                 return Result.Success(movieList)
             }
+        } else {
+
         }
+
         return Result.Error(result.code(), result.message())
     }
 

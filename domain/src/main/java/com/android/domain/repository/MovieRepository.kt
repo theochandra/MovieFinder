@@ -5,6 +5,6 @@ import com.android.domain.Result
 
 interface MovieRepository {
 
-    suspend fun getMovieListByQuery(searchKeywords: String, page: Int): Result<MovieList>
+    suspend fun getMovieListByQuery(apiKey: String, searchKeywords: String, page: Int): Result<MovieList>
 
 }

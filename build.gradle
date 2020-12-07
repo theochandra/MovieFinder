@@ -5,13 +5,16 @@ buildscript {
     ext.android_target_sdk_version = 29
 
     // kotlin version
-    ext.kotlin_version = "1.4.10"
+    ext.kotlin_version = '1.4.20'
 
     // dagger
     ext.dagger_version = '2.30.1'
 
     // javax annotation version
     ext.javax_annotation_version = '1.0'
+
+    // lifecycle
+    ext.lifecycle_version = '2.2.0'
 
     // coroutines
     ext.coroutines_version = '1.4.2'
@@ -29,10 +32,10 @@ buildscript {
     ext.picasso_version = '2.71828'
 
     // jUnit
-    ext.junit_version = '4.13'
+    ext.junit_version = '4.13.1'
 
     // mockito
-    ext.mockito_version = '3.5.11'
+    ext.mockito_version = '3.6.28'
     ext.mockito_kotlin_version = '1.6.0' // delete if not used anywhere
 
     repositories {
@@ -41,7 +44,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:4.0.1"
+        classpath 'com.android.tools.build:gradle:4.1.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong

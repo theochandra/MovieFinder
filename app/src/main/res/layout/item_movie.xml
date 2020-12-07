@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="movie"
+            type="com.android.domain.model.Movie" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_m">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/colorWhite"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardCornerRadius="@dimen/card_view_radius"
+            app:cardElevation="@dimen/card_view_elevation"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="@dimen/margin_m"/>
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="@dimen/margin_m"/>
+
+                <ImageView
+                    android:id="@+id/iv_poster"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    tools:src="@tools:sample/avatars"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:text="@{movie.title}"
+                    android:layout_width="@dimen/zero_dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_m"
+                    android:layout_marginEnd="@dimen/margin_m"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    tools:text="Movie Title long very long very very long much longer"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_poster"
+                    app:layout_constraintRight_toLeftOf="@+id/tv_popularity"
+                    app:layout_constraintLeft_toLeftOf="@+id/guideline_left"/>
+
+                <TextView
+                    android:id="@+id/tv_popularity"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_m"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    tools:text="7.4"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_poster"
+                    app:layout_constraintRight_toRightOf="@+id/guideline_right"/>
+
+                <TextView
+                    android:id="@+id/tv_overview"
+                    android:text="@{movie.overview}"
+                    android:layout_width="@dimen/zero_dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_m"
+                    android:layout_marginBottom="@dimen/margin_m"
+                    style="@style/TextAppearance.AppCompat.Small"
+                    tools:text="@tools:sample/lorem/random"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_title"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="@+id/guideline_left"
+                    app:layout_constraintRight_toRightOf="@+id/guideline_right" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

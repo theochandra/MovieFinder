@@ -8,12 +8,15 @@ import com.android.domain.model.MovieList
 import com.android.domain.repository.MovieRepository
 import com.nhaarman.mockito_kotlin.*
 import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import retrofit2.Response
 import retrofit2.Response.success
 
 @RunWith(MockitoJUnitRunner::class)
@@ -34,9 +37,9 @@ class MovieRepositoryImplTest {
     @Test
     fun `gets the movieList`() {
         runBlocking {
-            given(serviceApi.getMovieListByQuery(any(), any())).willReturn(mock())
-            sut.getMovieListByQuery("test", 1)
-            verify(serviceApi).getMovieListByQuery(any(), any())
+            given(serviceApi.getMovieListByQuery(any(), any(), any())).willReturn(mock())
+            sut.getMovieListByQuery("", "test", 1)
+            verify(serviceApi).getMovieListByQuery(any(), any(), any())
         }
     }
 
@@ -46,9 +49,9 @@ class MovieRepositoryImplTest {
             val movieListResponse = mock<MovieListResponse>()
             val response = success(movieListResponse)
 
-            given(serviceApi.getMovieListByQuery(any(), any())).willReturn(response)
+            given(serviceApi.getMovieListByQuery(any(), any(), any())).willReturn(response)
             given(movieMapper.map(any())).willReturn(mock())
-            sut.getMovieListByQuery("test", 1)
+            sut.getMovieListByQuery("", "test", 1)
             verify(movieMapper).map(eq(movieListResponse))
         }
     }
@@ -60,28 +63,27 @@ class MovieRepositoryImplTest {
             val response = success(movieListResponse)
             val mappedMovieList = mock<MovieList>()
 
-            given(serviceApi.getMovieListByQuery(any(), any())).willReturn(response)
+            given(serviceApi.getMovieListByQuery(any(), any(), any())).willReturn(response)
             given(movieMapper.map(any())).willReturn(mappedMovieList)
 
-            val result = sut.getMovieListByQuery("test", 1)
+            val result = sut.getMovieListByQuery("", "test", 1)
             Assert.assertEquals(Result.Success(mappedMovieList), result)
         }
     }
 
-//    @Test
-//    fun `returns error on failure`() {
-//        runBlocking {
-//            val errorResponse =
-//                    "{\n" +
-//                            "  \"type\": \"error\",\n" +
-//                            "  \"message\": \"What you were looking for isn't here.\"\n"
-//            + "}"
-//            val errorResponseBody = errorResponse.toResponseBody("application/json".toMediaTypeOrNull())
-//            val mockResponse = Response.error<MovieListResponse>(400, errorResponseBody)
-//
-//            given(serviceApi.getMovieListByQuery(any(), any())).willReturn(mockResponse)
-//            val result = sut.getMovieListByQuery("test", 1)
-//            assert
-//        }
-//    }
+    @Test
+    fun `returns error on failure`() {
+        runBlocking {
+            val errorResponse =
+                    "{\n" +
+                            "  \"type\": \"error\",\n" +
+                            "  \"message\": \"What you were looking for isn't here.\"\n" + "}"
+            val errorResponseBody = errorResponse.toResponseBody("application/json".toMediaTypeOrNull())
+            val mockResponse = Response.error<MovieListResponse>(400, errorResponseBody)
+            given(serviceApi.getMovieListByQuery(any(), any(), any())).willReturn(mockResponse)
+            val result = sut.getMovieListByQuery("", "test", 1)
+//            val response = Result.Error(mockResponse.code(), mockResponse.message())
+            Assert.assertEquals(Result.Error(400, "error occurred"), result)
+        }
+    }
 }
