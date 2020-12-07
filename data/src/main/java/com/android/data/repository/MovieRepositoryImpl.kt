@@ -34,8 +34,6 @@ class MovieRepositoryImpl (
                 )
                 return Result.Success(movieList)
             }
-        } else {
-
         }
 
         return Result.Error(result.code(), result.message())

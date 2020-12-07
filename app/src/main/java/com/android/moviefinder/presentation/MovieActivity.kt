@@ -1,8 +1,6 @@
 package com.android.moviefinder.presentation
 
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -32,9 +30,11 @@ class MovieActivity : BaseActivity() {
         movieViewModel = ViewModelProvider(this, factory)
             .get(MovieViewModel::class.java)
 
+        binding.viewModel = movieViewModel
+
         initRecycleView()
-        observeProgress()
         observeData()
+        observeError()
         observeException()
     }
 
@@ -47,21 +47,17 @@ class MovieActivity : BaseActivity() {
         }
     }
 
-    private fun observeProgress() {
-        movieViewModel.isLoading.observe(this, {
-            Log.i("MyTag", "isLoading ::: $it")
-            if (it)
-                binding.progressBar.visibility = View.VISIBLE
-            else
-                binding.progressBar.visibility = View.GONE
-        })
-    }
-
     private fun observeData() {
         movieViewModel.getMovieListByQuery()
         movieViewModel.movies.observe(this, {
             movieAdapter.setList(it)
             movieAdapter.notifyDataSetChanged()
+        })
+    }
+
+    private fun observeError() {
+        movieViewModel.error.observe(this, {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         })
     }
 
