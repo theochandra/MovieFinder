@@ -13,7 +13,7 @@ class MovieAdapter : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
     private val movieList = ArrayList<Movie>()
 
     fun setList(movies: List<Movie>) {
-        movieList.clear()
+//        movieList.clear()
         movieList.addAll(movies)
     }
 

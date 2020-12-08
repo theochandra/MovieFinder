@@ -44,6 +44,9 @@ class MovieActivity : BaseActivity() {
         binding.rvMovie.apply {
             layoutManager = LinearLayoutManager(this@MovieActivity)
             adapter = movieAdapter
+            addOnScrollListener(
+                    InfiniteScrollListener { movieViewModel.getMovieListByQuery() }
+            )
         }
     }
 
