@@ -1,4 +1,4 @@
-package com.android.moviefinder.presentation
+package com.android.moviefinder.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

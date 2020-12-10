@@ -9,6 +9,7 @@ import com.android.moviefinder.R
 import com.android.moviefinder.base.BaseActivity
 import com.android.moviefinder.databinding.ActivityMovieBinding
 import com.android.moviefinder.di.Injector
+import com.android.moviefinder.presentation.adapter.MovieAdapter
 import javax.inject.Inject
 
 class MovieActivity : BaseActivity() {
