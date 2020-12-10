@@ -6,19 +6,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.domain.Result
-import com.android.domain.model.Movie
 import com.android.domain.usecase.GetMovieListByQueryUseCase
 import com.android.moviefinder.BuildConfig
+import com.android.moviefinder.presentation.mapper.MovieVMMapper
+import com.android.moviefinder.presentation.vm.ItemLoadingVM
+import com.android.moviefinder.presentation.vm.ItemVM
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MovieViewModel @Inject constructor(
-    private val getMovieListByQueryUseCase: GetMovieListByQueryUseCase
+    private val getMovieListByQueryUseCase: GetMovieListByQueryUseCase,
+    private val movieVMMapper: MovieVMMapper
 ) : ViewModel() {
 
-    private val _movies = MutableLiveData<List<Movie>>()
-    val movies: LiveData<List<Movie>>
-        get() = _movies
+    private val _itemList = MutableLiveData<List<ItemVM>>()
+    val itemList: LiveData<List<ItemVM>>
+        get() = _itemList
 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String>
@@ -30,6 +33,8 @@ class MovieViewModel @Inject constructor(
 
     val isLoading = ObservableBoolean()
 
+    private val items = ArrayList<ItemVM>()
+
     fun getMovieListByQuery() {
         isLoading.set(true)
         viewModelScope.launch {
@@ -40,12 +45,43 @@ class MovieViewModel @Inject constructor(
             )
 
             when (result) {
-                is Result.Success -> _movies.postValue(result.data.results)
+                is Result.Success -> {
+                    items.addAll(result.data.results.map {
+                        movieVMMapper.map(it)
+                    })
+                    _itemList.postValue(items)
+                }
                 is Result.Error -> _error.postValue(result.errorMessage)
                 is Result.Exception -> _exception.postValue(result.exception)
             }
 
             isLoading.set(false)
+        }
+    }
+
+    fun loadMore() {
+//        items.clear()
+//        items.add(ItemLoadingVM(true))
+//        _itemList.postValue(items)
+
+        viewModelScope.launch {
+            val result = getMovieListByQueryUseCase.execute(
+                    BuildConfig.API_KEY,
+                    searchKeywords = "trans",
+                    page = 2
+            )
+
+            when (result) {
+                is Result.Success -> {
+                    items.clear()
+                    items.addAll(result.data.results.map {
+                        movieVMMapper.map(it)
+                    })
+                    _itemList.postValue(items)
+                }
+                is Result.Error -> _error.postValue(result.errorMessage)
+                is Result.Exception -> _exception.postValue(result.exception)
+            }
         }
     }
 

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="movie"
-            type="com.android.domain.model.Movie" />
+            type="com.android.moviefinder.presentation.vm.ItemMovieVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

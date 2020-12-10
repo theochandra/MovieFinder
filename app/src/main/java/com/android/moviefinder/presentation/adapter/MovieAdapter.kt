@@ -3,25 +3,14 @@ package com.android.moviefinder.presentation.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.android.domain.model.Movie
 import com.android.moviefinder.databinding.ItemLoadingBinding
 import com.android.moviefinder.databinding.ItemMovieBinding
+import com.android.moviefinder.presentation.vm.ItemMovieVM
 import com.android.moviefinder.presentation.vm.ItemVM
 
 class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    companion object {
-        private const val VIEW_TYPE_LOADING = 0
-        private const val VIEW_TYPE_MOVIE = 1
-    }
-
-    private val movieList = ArrayList<Movie>()
     private val itemList = ArrayList<ItemVM>()
-
-    fun setList(movies: List<Movie>) {
-//        movieList.clear()
-        movieList.addAll(movies)
-    }
 
     fun setItemList(items: List<ItemVM>) {
         itemList.addAll(items)
@@ -45,7 +34,7 @@ class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MovieViewHolder -> {
-                holder.binding.movie = movieList[position]
+                holder.binding.movie = itemList[position] as ItemMovieVM
             }
             is LoadingViewHolder -> {
 

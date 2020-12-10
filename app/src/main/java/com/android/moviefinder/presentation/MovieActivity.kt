@@ -10,6 +10,7 @@ import com.android.moviefinder.base.BaseActivity
 import com.android.moviefinder.databinding.ActivityMovieBinding
 import com.android.moviefinder.di.Injector
 import com.android.moviefinder.presentation.adapter.MovieAdapter
+import com.android.moviefinder.presentation.listener.InfiniteScrollListener
 import javax.inject.Inject
 
 class MovieActivity : BaseActivity() {
@@ -20,6 +21,7 @@ class MovieActivity : BaseActivity() {
     private lateinit var movieViewModel: MovieViewModel
     private lateinit var binding: ActivityMovieBinding
     private lateinit var movieAdapter: MovieAdapter
+    private lateinit var infiniteScrollListener: InfiniteScrollListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +36,7 @@ class MovieActivity : BaseActivity() {
         binding.viewModel = movieViewModel
 
         initRecycleView()
+        getData()
         observeData()
         observeError()
         observeException()
@@ -41,20 +44,25 @@ class MovieActivity : BaseActivity() {
 
     private fun initRecycleView() {
         movieAdapter = MovieAdapter()
+        infiniteScrollListener = InfiniteScrollListener { movieViewModel.loadMore() }
+        infiniteScrollListener.isLoading = false
 
         binding.rvMovie.apply {
             layoutManager = LinearLayoutManager(this@MovieActivity)
             adapter = movieAdapter
             addOnScrollListener(
-                    InfiniteScrollListener { movieViewModel.getMovieListByQuery() }
+                    InfiniteScrollListener { movieViewModel.loadMore() }
             )
         }
     }
 
-    private fun observeData() {
+    private fun getData() {
         movieViewModel.getMovieListByQuery()
-        movieViewModel.movies.observe(this, {
-            movieAdapter.setList(it)
+    }
+
+    private fun observeData() {
+        movieViewModel.itemList.observe(this, {
+            movieAdapter.setItemList(it)
             movieAdapter.notifyDataSetChanged()
         })
     }

@@ -1,4 +1,4 @@
-package com.android.moviefinder.presentation
+package com.android.moviefinder.presentation.listener
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +15,7 @@ class InfiniteScrollListener(
     /**
      * true if we are still waiting for the last set of data to load
      */
-    private var isLoading = true
+    var isLoading = true
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
@@ -36,7 +36,7 @@ class InfiniteScrollListener(
                 (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
             // End has been reached
             onLoadMore()
-            isLoading = true
+            isLoading = true // todo only make it false after load more finish
         }
     }
 
