@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.domain.model.Movie
 import com.android.moviefinder.databinding.ItemLoadingBinding
 import com.android.moviefinder.databinding.ItemMovieBinding
+import com.android.moviefinder.presentation.vm.ItemVM
 
 class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -15,21 +16,30 @@ class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     private val movieList = ArrayList<Movie>()
+    private val itemList = ArrayList<ItemVM>()
 
     fun setList(movies: List<Movie>) {
 //        movieList.clear()
         movieList.addAll(movies)
     }
 
+    fun setItemList(items: List<ItemVM>) {
+        itemList.addAll(items)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            VIEW_TYPE_MOVIE -> MovieViewHolder(ItemMovieBinding
-                    .inflate(LayoutInflater.from(parent.context), parent, false))
-            VIEW_TYPE_LOADING -> LoadingViewHolder(ItemLoadingBinding
-                    .inflate(LayoutInflater.from(parent.context), parent, false))
-            else -> MovieViewHolder(ItemMovieBinding
-                    .inflate(LayoutInflater.from(parent.context), parent, false))
+        lateinit var viewHolder: RecyclerView.ViewHolder
+        when (viewType) {
+            ItemVM.VIEW_TYPE_LOADING -> viewHolder = LoadingViewHolder(
+                ItemLoadingBinding
+                    .inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+            ItemVM.VIEW_TYPE_MOVIE -> viewHolder = MovieViewHolder(
+                ItemMovieBinding
+                    .inflate(LayoutInflater.from(parent.context), parent, false)
+            )
         }
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -44,10 +54,10 @@ class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (getItem(position) == null) VIEW_TYPE_LOADING else VIEW_TYPE_MOVIE
+        return itemList[position].getViewType()
     }
 
-    override fun getItemCount(): Int = movieList.size
+    override fun getItemCount(): Int = itemList.size
 
     class MovieViewHolder(
         val binding: ItemMovieBinding
