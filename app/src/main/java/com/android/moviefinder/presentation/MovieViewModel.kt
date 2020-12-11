@@ -19,8 +19,8 @@ class MovieViewModel @Inject constructor(
     private val movieVMMapper: MovieVMMapper
 ) : ViewModel() {
 
-    private val _itemList = MutableLiveData<List<ItemVM>>()
-    val itemList: LiveData<List<ItemVM>>
+    private val _itemList = MutableLiveData<MutableList<ItemVM>>()
+    val itemList: LiveData<MutableList<ItemVM>>
         get() = _itemList
 
     private val _error = MutableLiveData<String>()
@@ -38,67 +38,73 @@ class MovieViewModel @Inject constructor(
     val isLoading = ObservableBoolean()
 
     private var currentPage = 1
+    private var totalPage = 0
 
-    private val items = ArrayList<ItemVM>()
-
-    fun getMovieListByQuery() {
-        isLoading.set(true)
-        viewModelScope.launch {
-            val result = getMovieListByQueryUseCase.execute(
-                    BuildConfig.API_KEY,
-                    searchKeywords = "trans",
-                    page = currentPage
-            )
-
-            when (result) {
-                is Result.Success -> {
-                    items.addAll(result.data.results.map {
-                        movieVMMapper.map(it)
-                    })
-                    _itemList.postValue(items)
-
-                    if (currentPage < result.data.totalPages)
-                        currentPage++
-                }
-                is Result.Error -> _error.postValue(result.errorMessage)
-                is Result.Exception -> _exception.postValue(result.exception)
-            }
-
-            isLoading.set(false)
-        }
+    init {
+        _itemList.value = ArrayList()
     }
 
-    fun loadMore() {
-        items.clear()
-        items.add(ItemLoadingVM(true))
-        _itemList.postValue(items)
-
-        viewModelScope.launch {
-            val result = getMovieListByQueryUseCase.execute(
-                    BuildConfig.API_KEY,
-                    searchKeywords = "trans",
-                    page = 2
-            )
-
-            when (result) {
-                is Result.Success -> {
-                    items.clear()
-                    items.addAll(result.data.results.map {
-                        movieVMMapper.map(it)
-                    })
-                    _itemList.postValue(items)
-                }
-                is Result.Error -> _error.postValue(result.errorMessage)
-                is Result.Exception -> _exception.postValue(result.exception)
+    fun getMovieList() {
+        if (totalPage == currentPage) return
+        if (totalPage == 0) {
+            changeLoadingState(state = true)
+            executeGetMovieListByQuery()
+        } else {
+            if (currentPage < totalPage) {
+                currentPage++
+                addLoadingItem()
+                executeGetMovieListByQuery()
             }
-
-            _isStillLoading.postValue(false)
         }
-
     }
 
     private fun executeGetMovieListByQuery() {
+        viewModelScope.launch {
+            val result = getMovieListByQueryUseCase.execute(
+                    BuildConfig.API_KEY,
+                    searchKeywords = "trans",
+                    currentPage
+            )
 
+            when (result) {
+                is Result.Success -> {
+                    // remove loading item in last position if any
+                    removeLoadingItem()
+                    // add movie list
+                    _itemList.value?.addAll(result.data.results.map {
+                        movieVMMapper.map(it)
+                    })
+                    _itemList.notifyObserver()
+
+                    totalPage = result.data.totalPages
+                }
+                is Result.Error -> _error.postValue(result.errorMessage)
+                is Result.Exception -> _exception.postValue(result.exception)
+            }
+
+            changeLoadingState(state = false)
+            _isStillLoading.postValue(false)
+        }
+    }
+
+    private fun changeLoadingState(state: Boolean) {
+        isLoading.set(state)
+    }
+
+    private fun addLoadingItem() {
+        _itemList.value?.add(ItemLoadingVM(true))
+        _itemList.notifyObserver()
+    }
+
+    private fun removeLoadingItem() {
+        if (_itemList.value.isNullOrEmpty()) return
+        if (_itemList.value?.last() == ItemLoadingVM(true)) {
+            itemList.value?.removeLast()
+        }
+    }
+
+    private fun <T> MutableLiveData<T>.notifyObserver() {
+        this.value = this.value
     }
 
 }

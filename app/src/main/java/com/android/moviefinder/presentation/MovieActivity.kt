@@ -45,7 +45,7 @@ class MovieActivity : BaseActivity() {
 
     private fun initRecycleView() {
         movieAdapter = MovieAdapter()
-        infiniteScrollListener = InfiniteScrollListener { movieViewModel.loadMore() }
+        infiniteScrollListener = InfiniteScrollListener { getData() }
         binding.rvMovie.apply {
             layoutManager = LinearLayoutManager(this@MovieActivity)
             adapter = movieAdapter
@@ -56,7 +56,7 @@ class MovieActivity : BaseActivity() {
     }
 
     private fun getData() {
-        movieViewModel.getMovieListByQuery()
+        movieViewModel.getMovieList()
     }
 
     private fun observeData() {
