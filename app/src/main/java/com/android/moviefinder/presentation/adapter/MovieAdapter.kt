@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.moviefinder.databinding.ItemLoadingBinding
 import com.android.moviefinder.databinding.ItemMovieBinding
+import com.android.moviefinder.presentation.vm.ItemLoadingVM
 import com.android.moviefinder.presentation.vm.ItemMovieVM
 import com.android.moviefinder.presentation.vm.ItemVM
 
@@ -13,8 +14,20 @@ class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val itemList = ArrayList<ItemVM>()
 
     fun setItemList(items: List<ItemVM>) {
-        itemList.clear()
+//        itemList.clear()
         itemList.addAll(items)
+        notifyItemInserted(itemList.size - 1)
+    }
+
+    fun addLoadingItem() {
+        itemList.add(ItemLoadingVM(true))
+        notifyItemInserted(itemList.size - 1)
+    }
+
+    fun removeLoadingItem() {
+        if (itemList.isNullOrEmpty()) return
+        if (itemList.last() == ItemLoadingVM(true))
+            itemList.removeLast()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

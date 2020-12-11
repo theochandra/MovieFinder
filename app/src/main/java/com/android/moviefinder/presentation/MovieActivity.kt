@@ -45,7 +45,10 @@ class MovieActivity : BaseActivity() {
 
     private fun initRecycleView() {
         movieAdapter = MovieAdapter()
-        infiniteScrollListener = InfiniteScrollListener { getData() }
+        infiniteScrollListener = InfiniteScrollListener {
+            movieAdapter.addLoadingItem() // add item loading before get data
+            getData()
+        }
         binding.rvMovie.apply {
             layoutManager = LinearLayoutManager(this@MovieActivity)
             adapter = movieAdapter
@@ -61,8 +64,8 @@ class MovieActivity : BaseActivity() {
 
     private fun observeData() {
         movieViewModel.itemList.observe(this, {
+            movieAdapter.removeLoadingItem() // remove item loading before add data to list
             movieAdapter.setItemList(it)
-            movieAdapter.notifyDataSetChanged()
         })
     }
 
