@@ -34,7 +34,8 @@ class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MovieViewHolder -> {
-                holder.binding.movie = itemList[position] as ItemMovieVM
+                val itemMovieVM = itemList[position] as ItemMovieVM
+                holder.binding.movie = itemMovieVM
             }
             is LoadingViewHolder -> {
 

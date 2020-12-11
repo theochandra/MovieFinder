@@ -15,7 +15,7 @@ class InfiniteScrollListener(
     /**
      * true if we are still waiting for the last set of data to load
      */
-    var isLoading = true
+    var isLoading = false
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
@@ -26,7 +26,6 @@ class InfiniteScrollListener(
 
         if (isLoading) {
             if (totalItemCount > previousTotal) {
-                isLoading = false
                 previousTotal = totalItemCount
             }
         }
@@ -36,7 +35,7 @@ class InfiniteScrollListener(
                 (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
             // End has been reached
             onLoadMore()
-            isLoading = true // todo only make it false after load more finish
+            isLoading = true
         }
     }
 

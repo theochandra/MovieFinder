@@ -40,18 +40,17 @@ class MovieActivity : BaseActivity() {
         observeData()
         observeError()
         observeException()
+        observeIsStillLoading()
     }
 
     private fun initRecycleView() {
         movieAdapter = MovieAdapter()
         infiniteScrollListener = InfiniteScrollListener { movieViewModel.loadMore() }
-        infiniteScrollListener.isLoading = false
-
         binding.rvMovie.apply {
             layoutManager = LinearLayoutManager(this@MovieActivity)
             adapter = movieAdapter
             addOnScrollListener(
-                    InfiniteScrollListener { movieViewModel.loadMore() }
+                infiniteScrollListener
             )
         }
     }
@@ -67,15 +66,21 @@ class MovieActivity : BaseActivity() {
         })
     }
 
+    private fun observeIsStillLoading() {
+        movieViewModel.isStillLoading.observe(this, {
+            infiniteScrollListener.isLoading = it
+        })
+    }
+
     private fun observeError() {
         movieViewModel.error.observe(this, {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
         })
     }
 
     private fun observeException() {
         movieViewModel.exception.observe(this, {
-            Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
         })
     }
 

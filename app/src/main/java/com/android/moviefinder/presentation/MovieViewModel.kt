@@ -31,7 +31,13 @@ class MovieViewModel @Inject constructor(
     val exception: LiveData<Exception>
         get() = _exception
 
+    private val _isStillLoading = MutableLiveData<Boolean>()
+    val isStillLoading: LiveData<Boolean>
+        get() =  _isStillLoading
+
     val isLoading = ObservableBoolean()
+
+    private var currentPage = 1
 
     private val items = ArrayList<ItemVM>()
 
@@ -41,7 +47,7 @@ class MovieViewModel @Inject constructor(
             val result = getMovieListByQueryUseCase.execute(
                     BuildConfig.API_KEY,
                     searchKeywords = "trans",
-                    page = 1
+                    page = currentPage
             )
 
             when (result) {
@@ -50,6 +56,9 @@ class MovieViewModel @Inject constructor(
                         movieVMMapper.map(it)
                     })
                     _itemList.postValue(items)
+
+                    if (currentPage < result.data.totalPages)
+                        currentPage++
                 }
                 is Result.Error -> _error.postValue(result.errorMessage)
                 is Result.Exception -> _exception.postValue(result.exception)
@@ -60,9 +69,9 @@ class MovieViewModel @Inject constructor(
     }
 
     fun loadMore() {
-//        items.clear()
-//        items.add(ItemLoadingVM(true))
-//        _itemList.postValue(items)
+        items.clear()
+        items.add(ItemLoadingVM(true))
+        _itemList.postValue(items)
 
         viewModelScope.launch {
             val result = getMovieListByQueryUseCase.execute(
@@ -82,7 +91,14 @@ class MovieViewModel @Inject constructor(
                 is Result.Error -> _error.postValue(result.errorMessage)
                 is Result.Exception -> _exception.postValue(result.exception)
             }
+
+            _isStillLoading.postValue(false)
         }
+
+    }
+
+    private fun executeGetMovieListByQuery() {
+
     }
 
 }
