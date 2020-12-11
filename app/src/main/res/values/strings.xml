@@ -3,6 +3,7 @@
     <string name="app_name">MovieFinder</string>
 
     <string name="hint_et_search_keywords">Masukkan judul film yang ingin dicari...</string>
+    <string name="search_hint">Masukkan judul film yang ingin dicari...</string>
 
     <string name="label_dialog_title">Opss…</string>
     <string name="label_error_message">Terjadi kesalahan saat melakukan pencarian…\nCoba beberapa saat lagi.</string>
