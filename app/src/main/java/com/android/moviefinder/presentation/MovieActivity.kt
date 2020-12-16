@@ -1,6 +1,8 @@
 package com.android.moviefinder.presentation
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +13,7 @@ import com.android.moviefinder.databinding.ActivityMovieBinding
 import com.android.moviefinder.di.Injector
 import com.android.moviefinder.presentation.adapter.MovieAdapter
 import com.android.moviefinder.presentation.listener.InfiniteScrollListener
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class MovieActivity : BaseActivity() {
@@ -36,7 +39,7 @@ class MovieActivity : BaseActivity() {
         binding.viewModel = movieViewModel
 
         initRecycleView()
-        getData()
+        onSearch()
         observeData()
         observeError()
         observeException()
@@ -58,8 +61,48 @@ class MovieActivity : BaseActivity() {
         }
     }
 
+    private fun onSearch() {
+        binding.etSearchKeywords.addTextChangedListener(object : TextWatcher {
+            private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
+            private var searchJob: Job? = null
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // default implementation ignored
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                /**
+                 * 1. clear job
+                 * 2. clear list on adapter
+                 * 3. clear loading bar
+                 * 4. re-init current page and total page (viewModel)
+                 * 5. re-init total page (infinite scroll listener)
+                 */
+                searchJob?.cancel()
+                movieAdapter.clearList()
+                movieViewModel.changeLoadingState(false)
+                movieViewModel.initQueryParam()
+                infiniteScrollListener.previousTotal = 0
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrEmpty()) return
+                if (s.length < 3) return
+                searchJob = coroutineScope.launch {
+                    delay(500)
+                    getData(s.toString())
+                }
+            }
+        })
+    }
+
+
     private fun getData() {
         movieViewModel.getMovieList()
+    }
+
+    private fun getData(searchKeywords: String) {
+        movieViewModel.getMovieList(searchKeywords)
     }
 
     private fun observeData() {

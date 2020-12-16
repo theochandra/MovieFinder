@@ -36,27 +36,42 @@ class MovieViewModel @Inject constructor(
 
     val isLoading = ObservableBoolean()
 
+    private var searchKeywords = ""
     private var currentPage = 1
     private var totalPage = 0
 
+    fun initQueryParam() {
+        currentPage = 1
+        totalPage = 0
+    }
+
+    fun getMovieList(searchKeywords: String) {
+        this.searchKeywords = searchKeywords
+        getData(searchKeywords)
+    }
+
     fun getMovieList() {
+        getData(searchKeywords)
+    }
+
+    private fun getData(searchKeywords: String) {
         if (totalPage == currentPage) return
         if (totalPage == 0) {
             changeLoadingState(state = true)
-            executeGetMovieListByQuery()
+            executeGetMovieListByQuery(searchKeywords)
         } else {
             if (currentPage < totalPage) {
                 currentPage++
-                executeGetMovieListByQuery()
+                executeGetMovieListByQuery(searchKeywords)
             }
         }
     }
 
-    private fun executeGetMovieListByQuery() {
+    private fun executeGetMovieListByQuery(searchKeywords: String) {
         viewModelScope.launch {
             val result = getMovieListByQueryUseCase.execute(
                     BuildConfig.API_KEY,
-                    searchKeywords = "trans",
+                    searchKeywords,
                     currentPage
             )
 
@@ -76,7 +91,7 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    private fun changeLoadingState(state: Boolean) {
+    fun changeLoadingState(state: Boolean) {
         isLoading.set(state)
     }
 

@@ -10,7 +10,7 @@ class InfiniteScrollListener(
     /**
      * The total number of items in the data set after the last load
      */
-    private var previousTotal = 0
+    var previousTotal = 0
 
     /**
      * true if we are still waiting for the last set of data to load

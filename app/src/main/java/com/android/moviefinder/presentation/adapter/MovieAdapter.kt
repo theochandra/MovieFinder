@@ -13,8 +13,12 @@ class MovieAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val itemList = ArrayList<ItemVM>()
 
+    fun clearList() {
+        itemList.clear()
+        notifyDataSetChanged()
+    }
+
     fun setItemList(items: List<ItemVM>) {
-//        itemList.clear()
         itemList.addAll(items)
         notifyItemInserted(itemList.size - 1)
     }
