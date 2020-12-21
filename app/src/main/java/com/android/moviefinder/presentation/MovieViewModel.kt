@@ -14,8 +14,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MovieViewModel @Inject constructor(
-    private val getMovieListByQueryUseCase: GetMovieListByQueryUseCase,
-    private val movieVMMapper: MovieVMMapper
+        private val getMovieListByQueryUseCase: GetMovieListByQueryUseCase,
+        private val movieVMMapper: MovieVMMapper
 ) : ViewModel() {
 
     private val _itemList = MutableLiveData<List<ItemVM>>()
@@ -33,6 +33,11 @@ class MovieViewModel @Inject constructor(
     private val _isStillLoading = MutableLiveData<Boolean>()
     val isStillLoading: LiveData<Boolean>
         get() =  _isStillLoading
+
+    val input = MutableLiveData<String>()
+    fun getInput(): LiveData<String> {
+        return input
+    }
 
     val isLoading = ObservableBoolean()
 

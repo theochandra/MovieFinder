@@ -38,6 +38,7 @@
 
             <EditText
                 android:id="@+id/et_search_keywords"
+                android:text="@={viewModel.input}"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_box_height"
                 android:background="@drawable/selector_rounded_edittext"

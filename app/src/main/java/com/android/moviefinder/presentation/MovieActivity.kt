@@ -3,8 +3,10 @@ package com.android.moviefinder.presentation
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.moviefinder.R
@@ -26,6 +28,9 @@ class MovieActivity : BaseActivity() {
     private lateinit var movieAdapter: MovieAdapter
     private lateinit var infiniteScrollListener: InfiniteScrollListener
 
+    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
+    private var searchJob: Job? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,7 +44,8 @@ class MovieActivity : BaseActivity() {
         binding.viewModel = movieViewModel
 
         initRecycleView()
-        onSearch()
+        observeInput()
+//        onSearch()
         observeData()
         observeError()
         observeException()
@@ -56,28 +62,20 @@ class MovieActivity : BaseActivity() {
             layoutManager = LinearLayoutManager(this@MovieActivity)
             adapter = movieAdapter
             addOnScrollListener(
-                infiniteScrollListener
+                    infiniteScrollListener
             )
         }
     }
 
     private fun onSearch() {
         binding.etSearchKeywords.addTextChangedListener(object : TextWatcher {
-            private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
-            private var searchJob: Job? = null
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // default implementation ignored
+                Log.i("MyTag", "beforeTextChanged ${s.toString()}")
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                /**
-                 * 1. clear job
-                 * 2. clear list on adapter
-                 * 3. clear loading bar
-                 * 4. re-init current page and total page (viewModel)
-                 * 5. re-init total page (infinite scroll listener)
-                 */
+                Log.i("MyTag", "onTextChanged ${s.toString()}")
                 searchJob?.cancel()
                 movieAdapter.clearList()
                 movieViewModel.changeLoadingState(false)
@@ -86,6 +84,7 @@ class MovieActivity : BaseActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
+                Log.i("MyTag", "afterTextChanged ${s.toString()}")
                 if (s.isNullOrEmpty()) return
                 if (s.length < 3) return
                 searchJob = coroutineScope.launch {
@@ -103,6 +102,33 @@ class MovieActivity : BaseActivity() {
 
     private fun getData(searchKeywords: String) {
         movieViewModel.getMovieList(searchKeywords)
+    }
+
+    private fun observeInput() {
+        // todo -> it always called when change orientation, make it don't!!
+        movieViewModel.getInput().observe(this, { input ->
+            Log.i("MyTag", input)
+
+            /**
+             * 1. clear job
+             * 2. clear list on adapter
+             * 3. clear loading bar
+             * 4. re-init current page and total page (viewModel)
+             * 5. re-init total page (infinite scroll listener)
+             */
+            searchJob?.cancel()
+            movieAdapter.clearList()
+            movieViewModel.changeLoadingState(false)
+            movieViewModel.initQueryParam()
+            infiniteScrollListener.previousTotal = 0
+
+            if (input.isNullOrEmpty()) return@observe
+            if (input.length < 3) return@observe
+            searchJob = coroutineScope.launch {
+                delay(500)
+                getData(input)
+            }
+        })
     }
 
     private fun observeData() {
