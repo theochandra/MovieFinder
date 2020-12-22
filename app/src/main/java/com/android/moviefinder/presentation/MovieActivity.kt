@@ -45,7 +45,6 @@ class MovieActivity : BaseActivity() {
 
         initRecycleView()
         observeInput()
-//        onSearch()
         observeData()
         observeError()
         observeException()
@@ -67,35 +66,6 @@ class MovieActivity : BaseActivity() {
         }
     }
 
-    private fun onSearch() {
-        binding.etSearchKeywords.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // default implementation ignored
-                Log.i("MyTag", "beforeTextChanged ${s.toString()}")
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                Log.i("MyTag", "onTextChanged ${s.toString()}")
-                searchJob?.cancel()
-                movieAdapter.clearList()
-                movieViewModel.changeLoadingState(false)
-                movieViewModel.initQueryParam()
-                infiniteScrollListener.previousTotal = 0
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                Log.i("MyTag", "afterTextChanged ${s.toString()}")
-                if (s.isNullOrEmpty()) return
-                if (s.length < 3) return
-                searchJob = coroutineScope.launch {
-                    delay(500)
-                    getData(s.toString())
-                }
-            }
-        })
-    }
-
-
     private fun getData() {
         movieViewModel.getMovieList()
     }
@@ -106,6 +76,10 @@ class MovieActivity : BaseActivity() {
 
     private fun observeInput() {
         // todo -> it always called when change orientation, make it don't!!
+        /**
+         * observe always called because observer re-attached when onCreate called
+         * this is intended because lifecycle aware component
+         */
         movieViewModel.getInput().observe(this, { input ->
             Log.i("MyTag", input)
 
